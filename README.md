@@ -2,7 +2,7 @@
 
 ## Description
 
-This is an experiment to see how far we can get with a simple note taking app using AI and Flutter.
+This is an experiment to see how far we can get with building a simple note taking app using AI and Flutter.
 
 ## Features
 
