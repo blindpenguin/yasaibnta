@@ -16,23 +16,12 @@ class NoteListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-
     return ListTile(
       selected: isSelected,
       title: Text(
         note.title.isEmpty ? 'Untitled note' : note.title,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: Text(
-        note.content.isEmpty
-            ? 'No content yet'
-            : note.content.split('\n').first,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: textTheme.bodySmall,
       ),
       onTap: onTap,
     );

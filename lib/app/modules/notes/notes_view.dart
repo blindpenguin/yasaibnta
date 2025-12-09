@@ -5,10 +5,26 @@ import '../../data/models/note_model.dart';
 import 'notes_controller.dart';
 import 'widgets/dashboard_view.dart';
 import 'widgets/note_editor_view.dart';
+import 'widgets/note_reader_view.dart';
 import 'widgets/note_list_item.dart';
 
 class NotesView extends GetView<NotesController> {
   const NotesView({super.key});
+
+  void _confirmDeleteNote() {
+    if (!controller.hasSelection) return;
+
+    Get.defaultDialog(
+      title: 'Delete note',
+      middleText: 'Are you sure you want to delete this note? This action cannot be undone.',
+      textCancel: 'Cancel',
+      textConfirm: 'Delete',
+      onConfirm: () {
+        controller.deleteSelectedNote();
+        Get.back();
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +64,7 @@ class NotesView extends GetView<NotesController> {
             width: 1,
             color: theme.dividerColor,
           ),
-          // Right: dashboard or editor
+          // Right: dashboard, reader, or editor
           Expanded(
             child: Obx(
               () {
@@ -59,10 +75,20 @@ class NotesView extends GetView<NotesController> {
                     onCreateNote: controller.createNewNote,
                   );
                 }
-                return NoteEditorView(
+                if (controller.isEditing.value) {
+                  return NoteEditorView(
+                    note: selected,
+                    onSave: controller.saveNote,
+                    onDelete: _confirmDeleteNote,
+                    onClose: controller.cancelEditing,
+                    showDelete: !controller.isCreatingNew.value,
+                  );
+                }
+                return NoteReaderView(
                   note: selected,
-                  onSave: controller.saveNote,
-                  onDelete: controller.deleteSelectedNote,
+                  onEdit: controller.startEditing,
+                  onDelete: _confirmDeleteNote,
+                  onClose: controller.closeSelection,
                 );
               },
             ),

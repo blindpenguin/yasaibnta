@@ -8,11 +8,15 @@ class NoteEditorView extends StatefulWidget {
     required this.note,
     required this.onSave,
     required this.onDelete,
+    required this.onClose,
+    this.showDelete = true,
   });
 
   final Note note;
   final ValueChanged<Note> onSave;
   final VoidCallback onDelete;
+  final VoidCallback onClose;
+  final bool showDelete;
 
   @override
   State<NoteEditorView> createState() => _NoteEditorViewState();
@@ -76,11 +80,19 @@ class _NoteEditorViewState extends State<NoteEditorView> {
                 icon: const Icon(Icons.save),
                 label: const Text('Save'),
               ),
+              if (widget.showDelete) ...[
+                const SizedBox(width: 8),
+                OutlinedButton.icon(
+                  onPressed: widget.onDelete,
+                  icon: const Icon(Icons.delete),
+                  label: const Text('Delete'),
+                ),
+              ],
               const SizedBox(width: 8),
-              OutlinedButton.icon(
-                onPressed: widget.onDelete,
-                icon: const Icon(Icons.delete),
-                label: const Text('Delete'),
+              IconButton(
+                tooltip: 'Close',
+                onPressed: widget.onClose,
+                icon: const Icon(Icons.close),
               ),
             ],
           ),
@@ -94,6 +106,7 @@ class _NoteEditorViewState extends State<NoteEditorView> {
               maxLines: null,
               expands: true,
               keyboardType: TextInputType.multiline,
+              textAlignVertical: TextAlignVertical.top,
               decoration: const InputDecoration(
                 labelText: 'Content',
                 alignLabelWithHint: true,

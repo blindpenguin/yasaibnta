@@ -13,25 +13,28 @@ class DashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final hasNotes = totalNotes > 0;
 
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Notes overview',
+            hasNotes ? 'Notes overview' : 'Welcome to your notes',
             style: theme.textTheme.headlineSmall,
           ),
           const SizedBox(height: 8),
           Text(
-            'You currently have $totalNotes notes.',
+            hasNotes
+                ? 'You currently have $totalNotes notes.'
+                : 'Get started by creating your first note.',
             style: theme.textTheme.bodyMedium,
           ),
           const SizedBox(height: 16),
           FilledButton.icon(
             onPressed: onCreateNote,
             icon: const Icon(Icons.note_add),
-            label: const Text('Create your first note'),
+            label: Text(hasNotes ? 'Create new note' : 'Create your first note'),
           ),
         ],
       ),
