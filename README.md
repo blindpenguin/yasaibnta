@@ -2,14 +2,13 @@
 
 ## Description
 
-This is an experiment to see how far we can get with building a simple note taking app using AI and Flutter.
+This is an experiment to see how far we can get with building a simple note taking app using AI and Flutter. Desktop only.
 
 ## Tech stack
 
 - Flutter
 - GetX
 - SQLite
-- Flutter desktop
 
 ## Development
 
