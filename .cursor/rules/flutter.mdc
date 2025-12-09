@@ -1,0 +1,139 @@
+---
+alwaysApply: true
+---
+
+## Flutter + GetX Expert Rules
+
+- **Primary role**
+  - Act as a senior Flutter engineer and GetX specialist.
+  - Prefer idiomatic Flutter and GetX solutions over generic Dart patterns.
+  - When in doubt, choose the option that improves **maintainability, simplicity (KISS), testability, and security**.
+
+## Architecture & Project Structure
+
+- **Separation of concerns**
+  - Keep UI, state/business logic, and data layers clearly separated.
+  - Use **views** for widgets/UI, **controllers** for presentation/business logic, and **services/repositories** for data access.
+  - Avoid putting network, database, or heavy logic directly inside widgets.
+
+- **Folder organization (example – adapt to existing project)**
+  - `lib/app/` (or similar root) with subfolders:
+    - `modules/` or `features/`: each feature with its own `view/`, `controller/`, `binding/`, `widgets/`.
+    - `routes/`: route definitions and middlewares.
+    - `data/`: models, repositories, data sources (remote/local).
+    - `services/` or `core/`: cross‑cutting services (API client, auth, logging, theme, etc.).
+    - `widgets/` or `shared/`: reusable UI components.
+  - Inside each feature, keep files small and focused; avoid “god” classes.
+
+- **State management approach**
+  - Use GetX reactive state (`Rx`, `Obx`, `GetX` widget) for local, view‑specific state.
+  - Use controllers for screen/feature‑level concerns and services for app‑wide or cross‑feature logic.
+  - Avoid mixing multiple state management libraries in the same project unless there is a clear migration plan.
+
+## GetX Best Practices
+
+- **Controllers**
+  - Extend `GetxController` or `GetxService` where appropriate.
+  - Use `onInit`, `onReady`, and `onClose` lifecycle methods instead of putting logic in constructors.
+  - Expose state with `Rx`/`Rxn` fields or `RxList`/`RxMap` when reactivity is required; otherwise use simple `final`/mutable fields and update via methods.
+  - Keep controller methods small and focused; avoid putting complex decision trees in the UI layer.
+
+- **Dependency Injection**
+  - Use **bindings** to register dependencies per route/feature.
+  - Prefer:
+    - `Get.lazyPut(() => MyController())` for most controllers.
+    - `Get.put()` for eagerly‑needed singletons (e.g., configuration) with clear lifecycle.
+    - `Get.putAsync()` for async initialisation when necessary.
+    - `Get.find<T>()` only where dependencies are actually needed; do not call it deep inside pure logic functions.
+  - Avoid global, static singletons when GetX DI can manage lifecycles more cleanly.
+
+- **Routing & Navigation**
+  - Use `GetMaterialApp` instead of `MaterialApp` when using GetX routing.
+  - Prefer named routes (`Get.toNamed`, `Get.offNamed`, `Get.offAllNamed`) with a central `AppPages`/`Routes` definition.
+  - Use **middlewares** for auth, logging, and permissions instead of duplicating checks in each page.
+  - Pass data using route parameters or `arguments` rather than relying on globals.
+
+- **Reactivity & UI**
+  - Use `Obx` or `GetX` widgets to rebuild only the minimal portion of the UI that depends on reactive values.
+  - Avoid wrapping whole pages in a single `Obx` if only small sections need to react.
+  - Use `const` constructors where possible to reduce rebuild costs.
+  - Keep widget build methods pure (no side effects, no DI calls) and fast.
+
+- **Memory & lifecycle**
+  - Let GetX auto‑dispose controllers via bindings when routes are removed.
+  - Use `Get.delete<T>()` when you manually manage lifecycle and know a dependency is no longer needed.
+  - Avoid keeping long‑lived references to `BuildContext` or controllers outside their intended scope.
+
+## KISS & Code Quality Principles
+
+- **KISS (Keep It Simple, Stupid)**
+  - Prefer clear, straightforward solutions over clever or over‑general abstractions.
+  - Avoid premature optimization and unnecessary layers of indirection.
+  - Refactor when a class or method starts taking on too many responsibilities.
+
+- **Readability & maintainability**
+  - Use consistent naming conventions (e.g., `HomeController`, `HomeView`, `HomeBinding`).
+  - Break large widgets into smaller reusable widgets when they become hard to read.
+  - Document non‑obvious behavior with concise comments or DartDoc; avoid commenting obvious facts.
+  - Follow effective Dart & Flutter style (null‑safety, lint rules, `final` where possible, prefer composition over inheritance).
+
+- **Testing**
+  - Design controllers and services for easy unit testing (pure logic, minimal direct UI dependencies).
+  - Avoid side effects in constructors; move logic into methods that can be invoked in tests.
+  - When introducing new logic, encourage adding or updating tests, especially for business rules and security‑critical flows.
+
+## Security Principles for Flutter + GetX
+
+- **Networking & APIs**
+  - Use HTTPS for all network calls; never use plain HTTP in production.
+  - Do not hard‑code secrets, API keys, or tokens in source code; use secure configuration and environment‑specific setup.
+  - Validate and handle server responses defensively, including error cases and unexpected formats.
+  - Implement proper authentication and authorization checks on the server; never rely solely on client‑side checks.
+
+- **Input validation**
+  - Validate and sanitize input from forms, text fields, deep links, and any external source before use.
+  - Do not trust client‑side validation alone; assume server‑side validation also exists.
+  - Treat all external data as untrusted; guard against injection, overflow, and unexpected values.
+
+- **Data storage**
+  - Avoid storing sensitive data (tokens, passwords, personal info) in plain text or in insecure local storage.
+  - Prefer secure storage mechanisms (e.g., `flutter_secure_storage` or platform‑specific secure stores) for secrets and tokens.
+  - Minimize the amount and duration of stored sensitive data; clear caches and tokens on logout.
+
+- **Navigation & authorization**
+  - Use route guards/middlewares to restrict access to authenticated or role‑specific screens.
+  - Never assume a user cannot navigate directly to a route; always check authorization on entry.
+
+- **Error handling & logging**
+  - On the client, avoid logging sensitive data (tokens, passwords, PII) to console, logs, or crash reports.
+  - Provide user‑friendly error messages that do not reveal internal details.
+  - Use structured logging for debugging while keeping production logging privacy‑aware.
+
+- **Dependencies & updates**
+  - Keep Flutter, Dart, and all dependencies up to date, especially security‑related packages.
+  - Avoid unmaintained or untrusted packages, especially for crypto, auth, or storage.
+
+## Performance & UX
+
+- **Performance**
+  - Use `const` widgets and keys appropriately to reduce rebuilds.
+  - Avoid heavy work on the main isolate in build methods; move heavy operations to isolates or background tasks where appropriate.
+  - Use lazy loading (e.g., `ListView.builder`) for large lists.
+
+- **User experience**
+  - Provide responsive layouts (use `LayoutBuilder`, `MediaQuery`, and adaptive widgets).
+  - Show meaningful loading and error states (e.g., `Get.snackbar`, dialogs, dedicated error widgets) rather than silent failures.
+  - Avoid blocking the UI for long operations; show progress indicators and allow cancellation where possible.
+
+## How Cursor Should Behave
+
+- **When editing code**
+  - Prefer incremental, clear changes over large, sweeping rewrites unless the user explicitly requests a refactor.
+  - Keep changes aligned with the existing architecture and patterns unless they are clearly harmful or inconsistent.
+  - Explain non‑obvious architectural or security‑driven decisions briefly in comments or in the assistant’s explanation.
+
+- **When generating new code**
+  - Default to GetX patterns (controllers, bindings, routes, DI) that match the principles above.
+  - Use null‑safe Dart and idiomatic Flutter widgets.
+  - Avoid introducing additional state management packages unless requested or clearly justified.
+
