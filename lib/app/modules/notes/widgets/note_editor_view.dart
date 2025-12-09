@@ -23,6 +23,8 @@ class NoteEditorView extends StatefulWidget {
 }
 
 class _NoteEditorViewState extends State<NoteEditorView> {
+  static const double _toolbarHeight = 40;
+
   late final TextEditingController _titleController;
   late final TextEditingController _contentController;
 
@@ -66,16 +68,25 @@ class _NoteEditorViewState extends State<NoteEditorView> {
           child: Row(
             children: [
               Expanded(
-                child: TextField(
-                  controller: _titleController,
-                  decoration: const InputDecoration(
-                    labelText: 'Title',
-                    border: OutlineInputBorder(),
+                child: SizedBox(
+                  height: _toolbarHeight,
+                  child: TextField(
+                    controller: _titleController,
+                    decoration: const InputDecoration(
+                      labelText: 'Title',
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
                   ),
                 ),
               ),
               const SizedBox(width: 8),
               FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size(0, _toolbarHeight),
+                ),
                 onPressed: _handleSave,
                 icon: const Icon(Icons.save),
                 label: const Text('Save'),
@@ -83,6 +94,9 @@ class _NoteEditorViewState extends State<NoteEditorView> {
               if (widget.showDelete) ...[
                 const SizedBox(width: 8),
                 OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(0, _toolbarHeight),
+                  ),
                   onPressed: widget.onDelete,
                   icon: const Icon(Icons.delete),
                   label: const Text('Delete'),
@@ -90,6 +104,10 @@ class _NoteEditorViewState extends State<NoteEditorView> {
               ],
               const SizedBox(width: 8),
               IconButton(
+                constraints: const BoxConstraints.tightFor(
+                  height: _toolbarHeight,
+                  width: _toolbarHeight,
+                ),
                 tooltip: 'Close',
                 onPressed: widget.onClose,
                 icon: const Icon(Icons.close),

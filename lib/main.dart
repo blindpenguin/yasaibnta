@@ -48,17 +48,70 @@ class NotesApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = _buildTheme();
     return GetMaterialApp(
       title: 'Notes',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-        useMaterial3: true,
-      ),
+      theme: theme,
       initialRoute: AppRoutes.notes,
       getPages: AppPages.routes,
     );
   }
+}
+
+ThemeData _buildTheme() {
+  final base = ThemeData(
+    colorScheme: ColorScheme.fromSeed(
+      // Neutral, serious desktop palette.
+      seedColor: const Color(0xFF111827),
+      brightness: Brightness.light,
+    ),
+    useMaterial3: true,
+    visualDensity: VisualDensity.standard,
+  );
+
+  return base.copyWith(
+    scaffoldBackgroundColor: const Color(0xFFF5F5F7),
+    dividerColor: Colors.black12,
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: base.colorScheme.primary,
+        textStyle: const TextStyle(fontWeight: FontWeight.w500),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        backgroundColor: base.colorScheme.primary,
+        foregroundColor: base.colorScheme.onPrimary,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: base.colorScheme.primary,
+        side: BorderSide(color: base.colorScheme.outline),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ),
+    ),
+    listTileTheme: ListTileThemeData(
+      // Clear selection state for the note list.
+      selectedTileColor: const Color(0xFFD1D5DB),
+      selectedColor: base.colorScheme.onSurface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4),
+      ),
+    ),
+  );
 }
 
 

@@ -26,16 +26,15 @@ class NotesController extends GetxController {
     notes.assignAll(allNotes);
   }
 
-  /// Cancel the current editing session but keep the selected note.
-  /// This effectively returns to the previous (read-only) view.
   void cancelEditing() {
     final current = selectedNote.value;
     if (current == null) return;
 
-    // If we are on the create form, treat cancel as delete + back.
-    if (isCreatingNew.value && current.id != null) {
-      // Fire and forget; state will be reset in deleteSelectedNote.
-      deleteSelectedNote();
+    // If we are on the create form, treat cancel as "discard draft".
+    if (isCreatingNew.value && current.id == null) {
+      selectedNote.value = null;
+      isEditing.value = false;
+      isCreatingNew.value = false;
       return;
     }
 
@@ -46,17 +45,22 @@ class NotesController extends GetxController {
   void closeSelection() {
     selectedNote.value = null;
     isEditing.value = false;
+    isCreatingNew.value = false;
   }
 
   void selectNote(Note? note) {
+    // Tapping the already-selected note toggles selection off.
+    if (note != null && selectedNote.value?.id == note.id) {
+      selectedNote.value = null;
+      isEditing.value = false;
+      isCreatingNew.value = false;
+      return;
+    }
+
     selectedNote.value = note;
     isCreatingNew.value = false;
     // Clicking a note should show it in read-only mode first.
-    if (note == null) {
-      isEditing.value = false;
-    } else {
-      isEditing.value = false;
-    }
+    isEditing.value = false;
   }
 
   void startEditing() {
@@ -73,11 +77,8 @@ class NotesController extends GetxController {
       createdAt: now,
       updatedAt: now,
     );
-    final id = await _dbService.insertNote(note);
-    final created = note.copyWith(id: id);
-    notes.insert(0, created);
-    selectedNote.value = created;
-    // New notes open directly in edit mode.
+    // Keep this new note as an in-memory draft until the user hits Save.
+    selectedNote.value = note;
     isEditing.value = true;
     isCreatingNew.value = true;
   }

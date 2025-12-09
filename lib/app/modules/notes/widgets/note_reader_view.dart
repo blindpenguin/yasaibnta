@@ -21,12 +21,12 @@ class NoteReaderView extends StatelessWidget {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
 
-     final created = note.createdAt;
-     final updated = note.updatedAt;
-     final createdStr =
-         '${created.year.toString().padLeft(4, '0')}-${created.month.toString().padLeft(2, '0')}-${created.day.toString().padLeft(2, '0')}';
-     final updatedStr =
-         '${updated.year.toString().padLeft(4, '0')}-${updated.month.toString().padLeft(2, '0')}-${updated.day.toString().padLeft(2, '0')}';
+    final created = note.createdAt;
+    final updated = note.updatedAt;
+    final createdStr =
+        '${created.year.toString().padLeft(4, '0')}-${created.month.toString().padLeft(2, '0')}-${created.day.toString().padLeft(2, '0')}';
+    final updatedStr =
+        '${updated.year.toString().padLeft(4, '0')}-${updated.month.toString().padLeft(2, '0')}-${updated.day.toString().padLeft(2, '0')}';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -77,9 +77,9 @@ class NoteReaderView extends StatelessWidget {
         const Divider(height: 1),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(16),
             child: SingleChildScrollView(
-              child: Text(
+              child: SelectableText(
                 note.content.isEmpty ? 'No content yet.' : note.content,
                 style: textTheme.bodyMedium,
               ),
