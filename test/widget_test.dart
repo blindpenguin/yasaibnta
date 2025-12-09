@@ -13,7 +13,7 @@ void main() {
   testWidgets('App renders notes layout', (WidgetTester tester) async {
     await tester.pumpWidget(const NotesApp());
 
-    // Basic sanity checks for top-level structure.
-    expect(find.text('Notes'), findsOneWidget);
+    // Basic sanity checks for top-level structure: toolbar button is visible.
+    expect(find.text('New note'), findsOneWidget);
   });
 }

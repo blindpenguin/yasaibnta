@@ -15,9 +15,6 @@ class NotesView extends GetView<NotesController> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notes'),
-      ),
       body: Row(
         children: [
           // Left: toolbar + list
